@@ -1,0 +1,55 @@
+version: "3"
+services:
+  web-service:
+    image: web-service
+    entrypoint: ./wait-for-it.sh -t 30 cassandra:9042 -- ./wait-for-it.sh kafka:9092 -- bin/web-service
+    restart: always
+    ports:
+      - "9000:9000"
+    links:
+      - cassandra
+      - kafka
+  importer:
+    image: importer
+    entrypoint: ./wait-for-it.sh kafka:9092 -- bin/importer
+    restart: on-failure
+    links:
+      - kafka
+  processor:
+    image: procerssor
+    entrypoint: ./wait-for-it.sh web-service:9000 -- ./wait-for-it.sh kafka:9092 -- bin/processor
+    restart: always
+    links:
+      - kafka
+      - cassandra
+      - web-service
+  zookeeper:
+    image: zookeeper:3.4.9
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zookeeper:2888:3888
+  kafka:
+    image: wurstmeister/kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+    links:
+      - zookeeper
+  cassandra:
+    image: cassandra:3.7
+    hostname: cassandra
+    ports:
+      - "7000"
+      - "7001"
+      - "9042:9042"
+      - "9160"
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh < /dev/null"]
+      interval: 5s

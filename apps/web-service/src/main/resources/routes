@@ -1,0 +1,2 @@
+GET     /api/vehicles/list                                  controllers.VehicleController.list
+GET     /api/vehicles/vehicle/:id/lastPosition              controllers.VehicleController.lastPosition(id, limit: Int ?= 1000)
