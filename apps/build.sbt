@@ -1,3 +1,5 @@
+ThisBuild / scalaVersion := "2.11.8"
+
 lazy val aired = (project in file("."))
   .settings(
     inThisBuild(List(
@@ -9,7 +11,6 @@ lazy val aired = (project in file("."))
 
 lazy val shared = project
   .settings(
-    crossScalaVersions ++= Seq("2.11.8", "2.12.4"),
     libraryDependencies ++= Seq(
       "com.typesafe.play" %% "play-json" % "2.6.7",
       "org.scalatest" %% "scalatest" % "3.0.4"
@@ -19,7 +20,6 @@ lazy val shared = project
 lazy val importer = project
   .enablePlugins(JavaAppPackaging)
   .settings(
-    scalaVersion := "2.12.4",
     dockerUpdateLatest := true,
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-stream-kafka" % "0.18",

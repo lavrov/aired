@@ -11,7 +11,6 @@ object SparkProject {
   )
 
   val Settings = Seq(
-    scalaVersion := "2.11.8",
     parallelExecution in Test := false,
     fork := true,
     Universal / javaOptions ++= Seq("-J-Xms512M", "-J-Xmx2048M", "-Dspark.master=local[*]"),
