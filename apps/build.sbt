@@ -7,7 +7,7 @@ lazy val aired = (project in file("."))
       version := "0.0.1",
       Compile / run / fork := true,
     )))
-  .aggregate(shared, importer, processor, `web-service`)
+  .aggregate(shared, importer, processor, `web-service`, ui)
 
 lazy val shared = project
   .settings(
@@ -63,6 +63,15 @@ lazy val `web-service` = project
     dockerIncludeWaitForIt
   )
   .dependsOn(shared)
+
+lazy val ui = project
+  .enablePlugins(ScalaJSPlugin, WorkbenchSplicePlugin)
+  .settings(
+    scalaVersion := "2.12.4",
+    libraryDependencies += "com.thoughtworks.binding" %%% "dom" % "11.0.1",
+    scalaJSUseMainModuleInitializer := true,
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+  )
 
 def dockerIncludeWaitForIt = {
   import com.typesafe.sbt.packager.docker._
